@@ -145,11 +145,14 @@ class TestDemystifier(unittest.TestCase):
 if __name__ == '__main__':
   parser = argparse.ArgumentParser("Explain letters that do/don't show up in acronyms") 
   parser.add_argument("acronym", metavar="ABBV", type=str, nargs=1, help="The acronym to explain") 
+  parser.add_argument("-x", "--use-letters-not-in", action="store_true", help="Say what letters NOT in ABBV mean")
   parser.add_argument("--test", action="store_true", help='Run test suite')
   args = parser.parse_args()
   demystifier = Demystifier(args.acronym[0], Dictionary())
-  print(demystifier.meaning_of_letter_in())
+  if args.use_letters_not_in:
+    print(demystifier.not_good_meaning())
+  else:
+    print(demystifier.meaning())
   if args.test:
-    args.acronym=[]
     sys.argv = [sys.argv[0]]
     unittest.main()
