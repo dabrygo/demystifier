@@ -43,14 +43,20 @@ class Demystifier:
 		return self.random.choice(list)
 
   def acronym_letters(self):
-    return set(self.acronym.lower())
+    return self.acronym.lower()
+
+  def all_but(self, group):
+    return set(string.lowercase) - set(group)
 
   def not_acronym_letters(self):
-    return set(string.lowercase) - self.acronym_letters()
+    return self.all_but(self.acronym_letters())
 
+  def word_for_random_letter(self, letters):
+    letter = self.random_element_from(list(letters))
+    return letter, self.word_that_starts_with(letter)  
+ 
   def random_letter_means(self, letters):
-	  letter = self.random_element_from(list(letters))
-	  meaning = self.word_that_starts_with(letter)  
+	  letter, meaning = self.word_for_random_letter(letters)  
 	  return "The {} in {} stands for {}".format(letter.upper(), self.acronym, meaning.title())
 
   def meaning_of_letter_not_in(self):
@@ -59,18 +65,27 @@ class Demystifier:
 
   def meaning_of_letter_in(self):
     letters = self.acronym_letters()
-    return self.random_letter_means(letters)
+    return self.random_letter_means(self.acronym_letters())
 				
   def random_element_from(self, list):
     return self.random.choice(list)
 
   def meaning(self):
-    acronym_letters = list(self.acronym.lower())
     words = []
-    for letter in acronym_letters:
+    for letter in self.acronym_letters():
       words.append(self.word_that_starts_with(letter)) 
     meaning = ' '.join([word.title() for word in words])
     return "{} means {}".format(self.acronym, meaning)
+
+  def not_good_meaning(self):
+    words = []
+    acronym_letters = self.acronym.lower()
+    for letter in acronym_letters:
+      not_letter_group = self.all_but(letter)
+      _, word = self.word_for_random_letter(not_letter_group)
+      words.append(word)
+    meaning = ' '.join([word.title() for word in words])
+    return "{} does not mean {}".format(self.acronym, meaning)
 
 
 class TestDemystifier(unittest.TestCase):
@@ -114,6 +129,10 @@ class TestDemystifier(unittest.TestCase):
   def test_meaning_of_acronym_with_duplicates(self):
     self.demystifier.acronym = 'AAA'
     self.assertEquals('AAA means Aseptic Apses Affably', self.demystifier.meaning())
+
+  def test_not_good_meaning(self):
+    self.assertEquals("MPH does not mean Viral Johann'S Omnivores", self.demystifier.not_good_meaning())
+
 
 if __name__ == '__main__':
   unittest.main()
