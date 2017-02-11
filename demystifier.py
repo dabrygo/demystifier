@@ -22,14 +22,24 @@ def word_that_starts_with(letter, seed=None):
     raise ValueError("{} not found in dictionary".format(letter))
   return random_element_from(valid_words, seed)
 
-def letter_not_in(acronym):
-  return set(string.lowercase) - set(acronym.lower()) 
+def letters_in(acronym):
+  return set(acronym.lower())
 
-def meaning_of_letter_not_in(acronym, seed=None):
-  letters = letter_not_in(acronym) 
+def letter_not_in(acronym):
+  return set(string.lowercase) - letters_in(acronym) 
+
+def random_letter_means(acronym, letters, seed=None):
   letter = random_element_from(list(letters), seed)
   meaning = word_that_starts_with(letter, seed)  
   return "The {} in {} stands for {}".format(letter.upper(), acronym, meaning.title())
+
+def meaning_of_letter_not_in(acronym, seed=None):
+  letters = letter_not_in(acronym) 
+  return random_letter_means(acronym, letters, seed) 
+
+def meaning_of_letter_in(acronym, seed=None):
+  letters = letters_in(acronym)
+  return random_letter_means(acronym, letters, seed) 
 
 
 class TestDemystifier(unittest.TestCase):
@@ -53,6 +63,9 @@ class TestDemystifier(unittest.TestCase):
 
   def test_meaning_of_letter_not_in_MPH(self):
     self.assertEquals('The V in MPH stands for Vocalize', meaning_of_letter_not_in('MPH', seed=0))
+
+  def test_meaning_of_letter_in_MPH(self):
+    self.assertEquals('The H in MPH stands for Humanely', meaning_of_letter_in('MPH', seed=0))
    
 if __name__ == '__main__':
   unittest.main()
