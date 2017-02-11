@@ -62,8 +62,8 @@ class Demystifier:
     return letter, self.word_that_starts_with(letter)  
  
   def random_letter_means(self, letters):
-	  letter, meaning = self.word_for_random_letter(letters)  
-	  return "The {} in {} stands for {}".format(letter.upper(), self.acronym, meaning.title())
+    letter, meaning = self.word_for_random_letter(letters)  
+    return "The {} in {} stands for {}".format(letter.upper(), self.acronym, meaning.title())
 
   def meaning_of_letter_not_in(self):
     letters = self.not_acronym_letters()
