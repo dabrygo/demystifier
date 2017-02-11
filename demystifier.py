@@ -1,10 +1,32 @@
+from collections import defaultdict
 from random import Random
 import string
 import unittest
 
+class Dictionary:
+  def __init__(self, path='/usr/share/dict/words'):
+    self.words_by_letter = Dictionary.load(path)
+
+  @staticmethod
+  def load(path):
+    words_by_letter = defaultdict(list)
+    with open(path) as dictionary:
+      word = dictionary.readline()
+      while word:
+        word = word.strip().lower()
+        first_letter = word[0]
+        words_by_letter[first_letter].append(word)
+        word = dictionary.readline()
+    return words_by_letter
+
+  def get(self, letter):
+    #print(letter, self.words_by_letter[letter])
+    return self.words_by_letter[letter]
+  
 class Demystifier:
-  def __init__(self, acronym, seed=None):
+  def __init__(self, acronym, dictionary, seed=None):
     self.acronym = acronym
+    self.dictionary = dictionary
     self.random = Random()
     if seed is not None:
       self.random.seed(seed)
@@ -13,15 +35,9 @@ class Demystifier:
     return letter.lower() in self.acronym.lower() 
 
   def word_that_starts_with(self, letter):
-    with open('/usr/share/dict/words') as dictionary:
-			words = dictionary.readlines()
-			valid_words = []
-			for word in words:
-				if word.startswith(letter):
-					valid_words.append(word.rstrip()) 
-			if not valid_words:
-				raise ValueError("{} not found in dictionary".format(letter))
-			return self.random_element_from(valid_words)
+    if not self.dictionary.get(letter):
+      raise ValueError("{} not found in dictionary".format(letter))
+    return self.random_element_from(self.dictionary.get(letter))
 
   def random_element_from(self, list):
 		return self.random.choice(list)
@@ -50,8 +66,14 @@ class Demystifier:
 
 
 class TestDemystifier(unittest.TestCase):
+
+  @classmethod
+  def setUpClass(cls):
+    cls.dictionary = Dictionary()
+
   def setUp(self):
-    self.demystifier = Demystifier('MPH', seed=0)
+    TestDemystifier.dictionary.get('a')
+    self.demystifier = Demystifier('MPH', TestDemystifier.dictionary, seed=0)
 
   def test_letter_not_in_acronym(self):
     self.assertFalse(self.demystifier.acronym_has('i')) 
@@ -61,7 +83,7 @@ class TestDemystifier(unittest.TestCase):
     self.assertTrue(self.demystifier.acronym_has('i'))
 
   def test_i_starts_with_i(self):
-    self.assertEquals('intoxicant', self.demystifier.word_that_starts_with('i'))
+    self.assertEquals("interviewee's", self.demystifier.word_that_starts_with('i'))
 
   def test_8_not_in_dictionary(self):
     self.assertRaises(ValueError, self.demystifier.word_that_starts_with, '8')
@@ -73,10 +95,10 @@ class TestDemystifier(unittest.TestCase):
     self.assertIn('x', self.demystifier.not_acronym_letters())
 
   def test_meaning_of_letter_not_in_MPH(self):
-    self.assertEquals('The V in MPH stands for Visionary', self.demystifier.meaning_of_letter_not_in())
+    self.assertEquals('The V in MPH stands for Viral', self.demystifier.meaning_of_letter_not_in())
 
   def test_meaning_of_letter_in_MPH(self):
-    self.assertEquals('The H in MPH stands for Hosing', self.demystifier.meaning_of_letter_in())
+    self.assertEquals('The H in MPH stands for Hookup', self.demystifier.meaning_of_letter_in())
    
 if __name__ == '__main__':
   unittest.main()
