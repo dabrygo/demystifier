@@ -65,7 +65,7 @@ class Demystifier:
  
   def random_letter_means(self, letters):
     letter, meaning = self.word_for_random_letter(letters)  
-    return "The {} in {} stands for {}".format(letter.upper(), self.acronym, meaning.title())
+    return "The {} in {} means {}".format(letter.upper(), self.acronym, meaning.title())
 
   def meaning_of_letter_not_in(self):
     letters = self.not_acronym_letters()
@@ -78,6 +78,20 @@ class Demystifier:
   def random_element_from(self, list):
     return self.random.choice(list)
 
+  def meaning_of_letters(self, n):
+    words = []
+    for i in range(n):
+      if i > len(self.acronym):
+        break 
+      word = self.word_that_starts_with(self.acronym[i].lower())
+      words.append(word)
+    first = "The {} in {} means {}".format(self.acronym[0], self.acronym, words[0].title())
+    more = []
+    for i in range(1, len(words)):
+      more_text = "and the {} means {}".format(self.acronym[i], words[i].title())
+      more.append(more_text)
+    return first + ' ' + ' '.join(more)
+  
   def meaning(self):
     words = []
     for letter in self.acronym_letters():
@@ -126,10 +140,10 @@ class TestDemystifier(unittest.TestCase):
     self.assertIn('x', self.demystifier.not_acronym_letters())
 
   def test_meaning_of_letter_not_in_MPH(self):
-    self.assertEquals('The V in MPH stands for Virtuosi', self.demystifier.meaning_of_letter_not_in())
+    self.assertEquals('The V in MPH means Virtuosi', self.demystifier.meaning_of_letter_not_in())
 
   def test_meaning_of_letter_in_MPH(self):
-    self.assertEquals('The H in MPH stands for Hoorays', self.demystifier.meaning_of_letter_in())
+    self.assertEquals('The H in MPH means Hoorays', self.demystifier.meaning_of_letter_in())
    
   def test_meaning_of_MPH(self):
     self.assertEquals('MPH means Moralized Press Health', self.demystifier.meaning())
@@ -140,6 +154,9 @@ class TestDemystifier(unittest.TestCase):
 
   def test_not_good_meaning(self):
     self.assertEquals("MPH does not mean Virtuosi Josefina Openness", self.demystifier.not_good_meaning())
+
+  def test_meaning_of_letters_in(self):
+    self.assertEquals("The M in MPH means Moralized and the P means Press", self.demystifier.meaning_of_letters(2))
 
 
 if __name__ == '__main__':
@@ -153,6 +170,7 @@ if __name__ == '__main__':
     print(demystifier.not_good_meaning())
   else:
     print(demystifier.meaning())
+
   if args.test:
     sys.argv = [sys.argv[0]]
     unittest.main()
