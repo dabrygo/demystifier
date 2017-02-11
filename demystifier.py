@@ -1,7 +1,14 @@
+from random import Random
 import unittest
 
 def letter_in_acronym(letter, acronym):
   return letter.lower() in acronym.lower() 
+
+def random_element_from(list, seed=None):
+  random = Random()
+  if seed is not None:
+    random.seed(seed)
+  return random.choice(list)
 
 def word_that_starts_with(letter):
   with open('/usr/share/dict/words') as dictionary:
@@ -10,6 +17,7 @@ def word_that_starts_with(letter):
       if word.startswith(letter):
         return word.rstrip() 
   raise ValueError("{} not found in dictionary".format(letter))
+
 
 class TestDemystifier(unittest.TestCase):
   def test_no_i_in_TEAM(self):
@@ -24,6 +32,8 @@ class TestDemystifier(unittest.TestCase):
   def test_8_not_in_dictionary(self):
     self.assertRaises(ValueError, word_that_starts_with, '8')
 
+  def test_can_determine_random_value(self):
+    self.assertEqual(3, random_element_from([1, 2, 3], seed=0))
    
 if __name__ == '__main__':
   unittest.main()
