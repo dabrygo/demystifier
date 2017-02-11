@@ -22,6 +22,7 @@ class Dictionary:
   def get(self, letter):
     return self.words_by_letter[letter]
   
+
 class Demystifier:
   def __init__(self, acronym, dictionary, seed=None):
     self.acronym = acronym
@@ -63,6 +64,14 @@ class Demystifier:
   def random_element_from(self, list):
     return self.random.choice(list)
 
+  def meaning(self):
+    acronym_letters = list(self.acronym.lower())
+    words = []
+    for letter in acronym_letters:
+      words.append(self.word_that_starts_with(letter)) 
+    meaning = ' '.join([word.title() for word in words])
+    return "{} means {}".format(self.acronym, meaning)
+
 
 class TestDemystifier(unittest.TestCase):
 
@@ -99,5 +108,12 @@ class TestDemystifier(unittest.TestCase):
   def test_meaning_of_letter_in_MPH(self):
     self.assertEquals('The H in MPH stands for Hookup', self.demystifier.meaning_of_letter_in())
    
+  def test_meaning_of_MPH(self):
+    self.assertEquals('MPH means Mooring Presaged Headier', self.demystifier.meaning())
+
+  def test_meaning_of_acronym_with_duplicates(self):
+    self.demystifier.acronym = 'AAA'
+    self.assertEquals('AAA means Aseptic Apses Affably', self.demystifier.meaning())
+
 if __name__ == '__main__':
   unittest.main()
