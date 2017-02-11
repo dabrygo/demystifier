@@ -20,7 +20,6 @@ class Dictionary:
     return words_by_letter
 
   def get(self, letter):
-    #print(letter, self.words_by_letter[letter])
     return self.words_by_letter[letter]
   
 class Demystifier:
