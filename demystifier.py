@@ -1,5 +1,5 @@
 from collections import defaultdict
-from random import Random
+import random
 import re
 import string
 import unittest
@@ -33,7 +33,7 @@ class Demystifier:
   def __init__(self, acronym, dictionary, seed=None):
     self.acronym = acronym
     self.dictionary = dictionary
-    self.random = Random()
+    self.random = random.Random()
     if seed is not None:
       self.random.seed(seed)
 
