@@ -46,7 +46,7 @@ class Demystifier:
     return self.random_element_from(self.dictionary.get(letter))
 
   def random_element_from(self, list):
-		return self.random.choice(list)
+    return self.random.choice(list)
 
   def acronym_letters(self):
     return self.acronym.lower()
