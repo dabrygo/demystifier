@@ -1,7 +1,9 @@
+import argparse
 from collections import defaultdict
 import random
 import re
 import string
+import sys
 import unittest
 
 class Dictionary:
@@ -141,4 +143,13 @@ class TestDemystifier(unittest.TestCase):
 
 
 if __name__ == '__main__':
-  unittest.main()
+  parser = argparse.ArgumentParser("Explain letters that do/don't show up in acronyms") 
+  parser.add_argument("acronym", metavar="ABBV", type=str, nargs=1, help="The acronym to explain") 
+  parser.add_argument("--test", action="store_true", help='Run test suite')
+  args = parser.parse_args()
+  demystifier = Demystifier(args.acronym[0], Dictionary())
+  print(demystifier.meaning_of_letter_in())
+  if args.test:
+    args.acronym=[]
+    sys.argv = [sys.argv[0]]
+    unittest.main()
