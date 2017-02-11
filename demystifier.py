@@ -1,5 +1,6 @@
 from collections import defaultdict
 from random import Random
+import re
 import string
 import unittest
 
@@ -15,13 +16,18 @@ class Dictionary:
       while word:
         word = word.strip().lower()
         first_letter = word[0]
-        words_by_letter[first_letter].append(word)
+        if Dictionary.is_valid(word):
+          words_by_letter[first_letter].append(word)
         word = dictionary.readline()
     return words_by_letter
 
   def get(self, letter):
     return self.words_by_letter[letter]
   
+  @staticmethod
+  def is_valid(word):
+    return re.match(r'^\w+$', word.strip().lower())
+
 
 class Demystifier:
   def __init__(self, acronym, dictionary, seed=None):
@@ -106,7 +112,7 @@ class TestDemystifier(unittest.TestCase):
     self.assertTrue(self.demystifier.acronym_has('i'))
 
   def test_i_starts_with_i(self):
-    self.assertEquals("interviewee's", self.demystifier.word_that_starts_with('i'))
+    self.assertEquals("interweave", self.demystifier.word_that_starts_with('i'))
 
   def test_8_not_in_dictionary(self):
     self.assertRaises(ValueError, self.demystifier.word_that_starts_with, '8')
@@ -118,20 +124,20 @@ class TestDemystifier(unittest.TestCase):
     self.assertIn('x', self.demystifier.not_acronym_letters())
 
   def test_meaning_of_letter_not_in_MPH(self):
-    self.assertEquals('The V in MPH stands for Viral', self.demystifier.meaning_of_letter_not_in())
+    self.assertEquals('The V in MPH stands for Virtuosi', self.demystifier.meaning_of_letter_not_in())
 
   def test_meaning_of_letter_in_MPH(self):
-    self.assertEquals('The H in MPH stands for Hookup', self.demystifier.meaning_of_letter_in())
+    self.assertEquals('The H in MPH stands for Hoorays', self.demystifier.meaning_of_letter_in())
    
   def test_meaning_of_MPH(self):
-    self.assertEquals('MPH means Mooring Presaged Headier', self.demystifier.meaning())
+    self.assertEquals('MPH means Moralized Press Health', self.demystifier.meaning())
 
   def test_meaning_of_acronym_with_duplicates(self):
     self.demystifier.acronym = 'AAA'
-    self.assertEquals('AAA means Aseptic Apses Affably', self.demystifier.meaning())
+    self.assertEquals('AAA means Aspersions Arbitrate Afterthought', self.demystifier.meaning())
 
   def test_not_good_meaning(self):
-    self.assertEquals("MPH does not mean Viral Johann'S Omnivores", self.demystifier.not_good_meaning())
+    self.assertEquals("MPH does not mean Virtuosi Josefina Openness", self.demystifier.not_good_meaning())
 
 
 if __name__ == '__main__':
