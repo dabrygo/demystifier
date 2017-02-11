@@ -163,13 +163,20 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser("Explain letters that do/don't show up in acronyms") 
   parser.add_argument("acronym", metavar="ABBV", type=str, nargs=1, help="The acronym to explain") 
   parser.add_argument("-x", "--use-letters-not-in", action="store_true", help="Say what letters NOT in ABBV mean")
+  parser.add_argument("-o", "--one-letter", action="store_true", help="Only translate one letter")
   parser.add_argument("--test", action="store_true", help='Run test suite')
   args = parser.parse_args()
   demystifier = Demystifier(args.acronym[0], Dictionary())
   if args.use_letters_not_in:
-    print(demystifier.not_good_meaning())
+    if args.one_letter:
+      print(demystifier.meaning_of_letter_not_in())
+    else:
+      print(demystifier.not_good_meaning())
   else:
-    print(demystifier.meaning())
+    if args.one_letter:
+      print(demystifier.meaning_of_letter_in())
+    else:
+      print(demystifier.meaning())
 
   if args.test:
     sys.argv = [sys.argv[0]]
